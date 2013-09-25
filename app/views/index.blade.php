@@ -3,7 +3,7 @@
 @section('content')
 <div class="row-fluid">
     <div class="span4">
-        <img src="{{asset('assets/img/kids.jpg')}}" alt="">
+        <img src="{{asset('assets/img/kids.jpg')}}" class="img-rounded" alt="">
     </div>
     <div class="span8 white-text">
         <p>
@@ -23,10 +23,10 @@
     <li class="span4">
         <div class="thumbnail white-menu">
             <a class="white-text" href="">
-                <img src="{{asset('assets/img/graduation.jpg')}}" alt="">
+                <img class="index-pic img-rounded" src="{{asset('assets/img/graduation.jpg')}}" alt="">
                 <h3>Bible College</h3>
                 <p>
-                    There are currently 20 students at the college. This number includes first and second year students.  At present, a student must complete 24 subjects within the three-year program.
+                    There are currently 20 students at the college
                 </p>
             </a>
         </div>
@@ -34,10 +34,10 @@
     <li class="span4">
         <div class="thumbnail white-menu">
             <a class="white-text" href="">
-                <img src="{{asset('assets/img/believe.jpg')}}" alt="">
+                <img class="index-pic img-rounded" src="{{asset('assets/img/believe.jpg')}}" alt="">
                 <h3>Babu's Blog</h3>
                 <p>
-                    There are currently 20 students at the college. This number includes first and second year students.  At present, a student must complete 24 subjects within the three-year program.
+                    Follow Babu as he tells of the growth, prospects and adventures of the ministry
                 </p>
             </a>
         </div>
@@ -45,10 +45,10 @@
     <li class="span4">
         <div class="thumbnail white-menu">
             <a class="white-text" href="">
-                <img src="{{asset('assets/img/GCM Cover.jpg')}}" alt="">
+                <img class="index-pic img-rounded" src="{{asset('assets/img/GCM Cover.jpg')}}" alt="">
                 <h3>Contribute</h3>
                 <p>
-                    There are currently 20 students at the college. This number includes first and second year students.  At present, a student must complete 24 subjects within the three-year program.
+                    Explore ways to help Grace Christian Ministries
                 </p>
             </a>
         </div>
