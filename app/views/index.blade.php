@@ -79,7 +79,7 @@
 <ul class="thumbnails">
     <li class="span4">
         <div class="thumbnail white-menu">
-            <a class="white-text" href="">
+            <a class="white-text" href="{{URL::to('college')}}">
                 <img class="index-pic img-rounded" src="{{asset('assets/img/graduation.jpg')}}" alt="">
                 <h3>Bible College</h3>
                 <p>

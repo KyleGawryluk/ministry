@@ -34,4 +34,14 @@ class HomeController extends BaseController {
 	{
 		return View::make('believe');
 	}
+
+			public function college()
+	{
+		return View::make('college');
+	}
+
+				public function christianHome()
+	{
+		return View::make('christian-home');
+	}
 }

@@ -146,6 +146,8 @@ Route::get('/', array('as' => 'home', 'uses' => 'HomeController@showWelcome'));
 Route::get('/about-babu', array('as' => 'about-babu', 'uses' => 'HomeController@aboutBabu'));
 Route::get('/about-india', array('as' => 'about-india', 'uses' => 'HomeController@aboutIndia'));
 Route::get('/believe', array('as' => 'believe', 'uses' => 'HomeController@believe'));
+Route::get('/college', array('as' => 'college', 'uses' => 'HomeController@college'));
+Route::get('/christian-home', array('as' => 'christian-home', 'uses' => 'HomeController@christianHome'));
 
 
 Route::get('/blog', array('as' => 'blog', 'uses' => 'BlogController@getIndex'));

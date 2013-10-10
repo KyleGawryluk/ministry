@@ -94,8 +94,8 @@
 										<b class="caret"></b>
 									</a>
 									<ul class="dropdown-menu">
-										<li {{ (Request::is('college') ? 'class="active"' : '') }}><a href="{{ URL::to('about-us') }}"><i class="icon-file icon-white"></i> Bible College</a></li>
-										<li {{ (Request::is('christian-home') ? 'class="active"' : '') }}><a href="{{ URL::to('about-us') }}"><i class="icon-file icon-white"></i> Grace Christian Home</a></li>
+										<li {{ (Request::is('college') ? 'class="active"' : '') }}><a href="{{ URL::to('college') }}"><i class="icon-file icon-white"></i> Bible College</a></li>
+										<li {{ (Request::is('christian-home') ? 'class="active"' : '') }}><a href="{{ URL::to('christian-home') }}"><i class="icon-file icon-white"></i> Grace Christian Home</a></li>
 									</ul>
 								</li>
 								
