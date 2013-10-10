@@ -20,4 +20,18 @@ class HomeController extends BaseController {
 		return View::make('index');
 	}
 
+	public function aboutBabu()
+	{
+		return View::make('about-babu');
+	}
+
+	public function aboutIndia()
+	{
+		return View::make('about-india');
+	}
+
+		public function believe()
+	{
+		return View::make('believe');
+	}
 }

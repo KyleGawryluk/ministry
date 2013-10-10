@@ -20,6 +20,7 @@
 		<!-- CSS
 		================================================== -->
 		<link href="{{ asset('assets/css/bootstrap.css') }}" rel="stylesheet">
+		<link href="{{ asset('assets/css/bootstrap-responsive.css') }}" rel="stylesheet">
 		<link href="{{ asset('assets/css/styles.css') }}" rel="stylesheet">
 
 		<style>
@@ -46,9 +47,9 @@
 
 	<body>
 
-		<a class="logo" href="#"><img src="{{asset('assets/img/logo.png')}}"></a>
+		<a class="logo" href="{{URL::to('/')}}"><img src="{{asset('assets/img/logo.png')}}"></a>
 		<!-- Container -->
-		<div class="container">
+		<div class="container-fluid">
 			<!-- Navbar -->
 			<div class="navbar navbar-inverse navbar-fixed-top">
 				<div class="navbar-inner">
@@ -85,15 +86,16 @@
 							<div class="clearfix"></div>
 							<ul class="nav pull-right">
 								<li {{ (Request::is('/') ? 'class="active"' : '') }}><a href="{{ route('home') }}"><i class="icon-home icon-white"></i> Home</a></li>
-								<li {{ (Request::is('about-us') ? 'class="active"' : '') }}><a href="{{ URL::to('about-us') }}"><i class="icon-file icon-white"></i> What We Believe</a></li>
+								<li {{ (Request::is('blog') ? 'class="active"' : '') }}><a href="{{ route('blog') }}"><i class="icon-home icon-white"></i>Babu's Blog</a></li>
+								<li {{ (Request::is('believe') ? 'class="active"' : '') }}><a href="{{ URL::to('believe') }}"><i class="icon-file icon-white"></i> What We Believe</a></li>
 								<li class="dropdown">
 									<a href="#" class="dropdown-toggle" data-toggle="dropdown">
 										Education
 										<b class="caret"></b>
 									</a>
 									<ul class="dropdown-menu">
-										<li {{ (Request::is('about-us') ? 'class="active"' : '') }}><a href="{{ URL::to('about-us') }}"><i class="icon-file icon-white"></i> Bible College</a></li>
-										<li {{ (Request::is('about-us') ? 'class="active"' : '') }}><a href="{{ URL::to('about-us') }}"><i class="icon-file icon-white"></i> Grace Christian Home</a></li>
+										<li {{ (Request::is('college') ? 'class="active"' : '') }}><a href="{{ URL::to('about-us') }}"><i class="icon-file icon-white"></i> Bible College</a></li>
+										<li {{ (Request::is('christian-home') ? 'class="active"' : '') }}><a href="{{ URL::to('about-us') }}"><i class="icon-file icon-white"></i> Grace Christian Home</a></li>
 									</ul>
 								</li>
 								
@@ -103,9 +105,9 @@
 										<b class="caret"></b>
 									</a>
 									<ul class="dropdown-menu">
-										<li {{ (Request::is('about-us') ? 'class="active"' : '') }}><a href="{{ URL::to('about-us') }}"><i class="icon-file icon-white"></i> About Babu</a></li>
-										<li {{ (Request::is('about-us') ? 'class="active"' : '') }}><a href="{{ URL::to('about-us') }}"><i class="icon-file icon-white"></i> About India</a></li>
-										<li {{ (Request::is('about-us') ? 'class="active"' : '') }}><a href="{{ URL::to('about-us') }}"><i class="icon-file icon-white"></i> Current Projects</a></li>
+										<li {{ (Request::is('about-babu') ? 'class="active"' : '') }}><a href="{{ URL::to('about-babu') }}"><i class="icon-file icon-white"></i> About Babu</a></li>
+										<li {{ (Request::is('about-india') ? 'class="active"' : '') }}><a href="{{ URL::to('about-india') }}"><i class="icon-file icon-white"></i> About India</a></li>
+										<li {{ (Request::is('current-projects') ? 'class="active"' : '') }}><a href="{{ URL::to('current-projects') }}"><i class="icon-file icon-white"></i> Current Projects</a></li>
 									</ul>
 								</li>
 								
@@ -129,7 +131,7 @@
 
 			<!-- Footer -->
 			<footer class="navbar navbar-inverse navbar-fixed-bottom pad-footer">
-				<div class="navbar-inner">
+				<div class="navbar-inner footer">
 					<div class="container">
 						<p class="footer">&copy; Grace Christian Ministries {{ date('Y') }}</p>
 					</div>
@@ -141,5 +143,12 @@
 		================================================== -->
 		<script src="{{ asset('assets/js/jquery.1.10.2.min.js') }}"></script>
 		<script src="{{ asset('assets/js/bootstrap/bootstrap.min.js') }}"></script>
+		<script>
+		$( document ).ready(function() {
+			$('.btn-navbar').on('click',function(){
+				$('.logo').toggle('fast');
+			});
+		});
+		</script>
 	</body>
 	</html>

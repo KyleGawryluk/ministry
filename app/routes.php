@@ -142,3 +142,10 @@ Route::get('blog/{postSlug}', array('as' => 'view-post', 'uses' => 'BlogControll
 Route::post('blog/{postSlug}', 'BlogController@postView');
 
 Route::get('/', array('as' => 'home', 'uses' => 'HomeController@showWelcome'));
+
+Route::get('/about-babu', array('as' => 'about-babu', 'uses' => 'HomeController@aboutBabu'));
+Route::get('/about-india', array('as' => 'about-india', 'uses' => 'HomeController@aboutIndia'));
+Route::get('/believe', array('as' => 'believe', 'uses' => 'HomeController@believe'));
+
+
+Route::get('/blog', array('as' => 'blog', 'uses' => 'BlogController@getIndex'));
