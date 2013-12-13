@@ -33,30 +33,30 @@
             <div class="span4 white-text">
                 <h2>Sponsor a Pastor</h2>
                 <p>
-                   The Pastor Sponsorship Program is for ground level partnering with pastors in training. 
-                   These investments ensure that partnering pastors receive theological education, 
-                   and allow believers in the States to connect with them through prayer and ministry
-                   updates.
-               </p>
-           </div>
-       @foreach($pastors as $pastor)
-            <div class="span2 thumbnail pastor">
+                 The Pastor Sponsorship Program is for ground level partnering with pastors in training. 
+                 These investments ensure that partnering pastors receive theological education, 
+                 and allow believers in the States to connect with them through prayer and ministry
+                 updates.
+             </p>
+         </div>
+         @foreach($pastors as $pastor)
+         
+            <div class="span2 pastor white-menu">
                 <a href="{{URL::to('pastors/'.$pastor->id)}}">
-                 <div class="pastor-div text-center">
-                    <img src="{{asset('assets/img/pastors/'.$pastor->image_name)}}" alt="pastor" class="pastor-img">
-                 </div>
-                <div class=" text-center">
-                    <h4>{{$pastor->name}} <br>
-                        <small>{{$pastor->title}}</small>
-                        <br>
-                        <small>{{$pastor->church}}</small>
-                    </h4>
-                </div>
-                </a>
+               <div class="pastor-div text-center">
+                <img src="{{asset('assets/img/pastors/'.$pastor->image_name)}}" alt="pastor" class="pastor-img">
             </div>
-       @endforeach
+            <div class=" text-center">
+                <strong>{{$pastor->name}}</strong> <br>
+                <small>{{$pastor->church}}</small>
+            </div>
+             </a>
+        </div>
+   
+    @endforeach
 
-    
+
+</div>
 </div>
 </div>
 <hr>

@@ -108,7 +108,7 @@
 									<ul class="dropdown-menu">
 										<li {{ (Request::is('about-babu') ? 'class="active"' : '') }}><a href="{{ URL::to('about-babu') }}"><i class="icon-file icon-white"></i> About Babu</a></li>
 										<li {{ (Request::is('about-india') ? 'class="active"' : '') }}><a href="{{ URL::to('about-india') }}"><i class="icon-file icon-white"></i> About India</a></li>
-										<li {{ (Request::is('current-projects') ? 'class="active"' : '') }}><a href="{{ URL::to('current-projects') }}"><i class="icon-file icon-white"></i> Current Projects</a></li>
+										<li class="{{ (Request::is('current-projects') ? 'active' : '') }} disabled"><a href="{{ URL::to('current-projects') }}"><i class="icon-file icon-white"></i> Current Projects</a></li>
 									</ul>
 								</li>
 								

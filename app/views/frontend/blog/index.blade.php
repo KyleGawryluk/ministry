@@ -1,23 +1,21 @@
 @extends('frontend/layouts/default')
 
-{{-- Page content --}}
 @section('content')
 @foreach ($posts as $post)
-<div class="row">
-	<div class="span8 ">
-		<!-- Post Title -->
-		<div class="row">
-			<div class="span8">
+<div class="row-fluid">
+	<div class="span12" style="color:#fff;">
+		<div class="row-fluid">
+			<div class="span12">
 				<h4><strong><a href="{{ $post->url() }}">{{ $post->title }}</a></strong></h4>
 			</div>
 		</div>
 
 		<!-- Post Content -->
-		<div class="row">
+		<div class="row-fluid">
 			<div class="span2">
 				<a href="{{ $post->url() }}" class="thumbnail"><img src="{{ $post->thumbnail() }}" alt=""></a>
 			</div>
-			<div class="span6">
+			<div class="span10">
 				<p>
 					{{ Str::limit($post->content, 200) }}
 				</p>
@@ -26,8 +24,8 @@
 		</div>
 
 		<!-- Post Footer -->
-		<div class="row">
-			<div class="span8">
+		<div class="row-fluid">
+			<div class="span12">
 				<p></p>
 				<p>
 					<i class="icon-user"></i> by <span class="muted">{{ $post->author->first_name }}</span>
