@@ -87,6 +87,7 @@
 							<ul class="nav pull-right">
 								<li {{ (Request::is('/') ? 'class="active"' : '') }}><a href="{{ route('home') }}"><i class="icon-home icon-white"></i> Home</a></li>
 								<li {{ (Request::is('blog') ? 'class="active"' : '') }}><a href="{{ route('blog') }}"><i class="icon-home icon-white"></i>Babu's Blog</a></li>
+								<li {{ (Request::is('pastors') ? 'class="active"' : '') }}><a href="{{ URL::to('pastors') }}"><i class="icon-home icon-white"></i>Sponsor A Pastor</a></li>
 								<li {{ (Request::is('believe') ? 'class="active"' : '') }}><a href="{{ URL::to('believe') }}"><i class="icon-file icon-white"></i> What We Believe</a></li>
 								<li class="dropdown">
 									<a href="#" class="dropdown-toggle" data-toggle="dropdown">

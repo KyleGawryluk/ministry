@@ -17,7 +17,8 @@ class HomeController extends BaseController {
 
 	public function showWelcome()
 	{
-		return View::make('index');
+		$pastors = Pastor::all()->take(4);
+		return View::make('index',compact('pastors'));
 	}
 
 	public function aboutBabu()

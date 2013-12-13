@@ -39,40 +39,24 @@
                    updates.
                </p>
            </div>
-           <div class="span2">
-            <a href="">
-                <img src="http://placehold.it/100x100" alt="">
-                <p>
-                    Placeholder
-                </p>
-            </a>
-        </div>
-        <div class="span2">
-            <a href="">
-                <img src="http://placehold.it/100x100" alt="">
-                <p>
-                    Placeholder
-                </p>
-            </a>
-        </div>
-        <div class="span2">
-            <a href="">
-                <img src="http://placehold.it/100x100" alt="">
-                <p>
-                    Placeholder
-                </p>
-            </a>
-        </div>
-        <div class="span2">
-            <a href="">
-                <img src="http://placehold.it/100x100" alt="">
-                <p>
-                    Placeholder
-                </p>
-            </a>
-        </div>
+       @foreach($pastors as $pastor)
+            <div class="span2 thumbnail pastor">
+                <a href="{{URL::to('pastors/'.$pastor->id)}}">
+                 <div class="pastor-div text-center">
+                    <img src="{{asset('assets/img/pastors/'.$pastor->image_name)}}" alt="pastor" class="pastor-img">
+                 </div>
+                <div class=" text-center">
+                    <h4>{{$pastor->name}} <br>
+                        <small>{{$pastor->title}}</small>
+                        <br>
+                        <small>{{$pastor->church}}</small>
+                    </h4>
+                </div>
+                </a>
+            </div>
+       @endforeach
 
-    </div>
+    
 </div>
 </div>
 <hr>

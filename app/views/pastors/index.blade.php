@@ -17,10 +17,11 @@
 					</h4>
 				</div>
 			</div>
+			<hr class="visible-phone">
 			<span style="display:none">{{$i++}}</span>
 			@if($i %4 == 0)
 		</div>
-		<br>
+		<br class="hidden-phone">
 		<div class="row-fluid">
 			@endif
 			@endforeach
