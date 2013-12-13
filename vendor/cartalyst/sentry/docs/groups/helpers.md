@@ -1,17 +1,17 @@
-### Helpers
+## Helpers
 
-----------
+### getPermissions() {#getpermissions}
 
-#### getPermissions()
+---
 
 Returns the permissions of a group.
 
-##### Example
+#### Example
 
 	try
 	{
 		// Find the group using the group id
-		$group = Sentry::getGroupProvider()->findById(1);
+		$group = Sentry::findGroupById(1);
 
 		// Get the group permissions
 		$groupPermissions = $group->getPermissions();

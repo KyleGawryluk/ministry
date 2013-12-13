@@ -157,7 +157,7 @@ class SentryTest extends PHPUnit_Framework_TestCase {
 			'password' => 'baz_bat',
 		);
 
-		$this->userProvider->shouldReceive('getEmptyUser')->once()->andReturn($emptyUser = m::mock('Caralyst\Sentry\Users\UserInterface'));
+		$this->userProvider->shouldReceive('getEmptyUser')->once()->andReturn($emptyUser = m::mock('Cartalyst\Sentry\Users\UserInterface'));
 		$emptyUser->shouldReceive('getLoginName')->once()->andReturn('email');
 
 		$this->throttleProvider->shouldReceive('isEnabled')->once()->andReturn(true);
@@ -178,7 +178,7 @@ class SentryTest extends PHPUnit_Framework_TestCase {
 			'password' => 'baz_bat',
 		);
 
-		$this->userProvider->shouldReceive('getEmptyUser')->once()->andReturn($emptyUser = m::mock('Caralyst\Sentry\Users\UserInterface'));
+		$this->userProvider->shouldReceive('getEmptyUser')->once()->andReturn($emptyUser = m::mock('Cartalyst\Sentry\Users\UserInterface'));
 		$emptyUser->shouldReceive('getLoginName')->once()->andReturn('email');
 
 		$this->throttleProvider->shouldReceive('isEnabled')->once()->andReturn(true);
@@ -199,7 +199,7 @@ class SentryTest extends PHPUnit_Framework_TestCase {
 			'password' => 'baz_bat',
 		);
 
-		$this->userProvider->shouldReceive('getEmptyUser')->once()->andReturn($emptyUser = m::mock('Caralyst\Sentry\Users\UserInterface'));
+		$this->userProvider->shouldReceive('getEmptyUser')->once()->andReturn($emptyUser = m::mock('Cartalyst\Sentry\Users\UserInterface'));
 		$emptyUser->shouldReceive('getLoginName')->once()->andReturn('email');
 
 		$this->throttleProvider->shouldReceive('isEnabled')->once()->andReturn(true);
@@ -266,7 +266,7 @@ class SentryTest extends PHPUnit_Framework_TestCase {
 			'password' => 'baz_bat',
 		);
 
-		$this->userProvider->shouldReceive('getEmptyUser')->once()->andReturn($emptyUser = m::mock('Caralyst\Sentry\Users\UserInterface'));
+		$this->userProvider->shouldReceive('getEmptyUser')->once()->andReturn($emptyUser = m::mock('Cartalyst\Sentry\Users\UserInterface'));
 		$emptyUser->shouldReceive('getLoginName')->once()->andReturn('email');
 
 		$this->throttleProvider->shouldReceive('isEnabled')->once()->andReturn(true);
@@ -277,11 +277,11 @@ class SentryTest extends PHPUnit_Framework_TestCase {
 		$this->userProvider->shouldReceive('findByCredentials')->with($credentials)->once()->andReturn($user = m::mock('Cartalyst\Sentry\Users\UserInterface'));
 
 		// Upon successful login with throttling, the throttle
-		// attemps are cleared
+		// attempts are cleared
 		$throttle->shouldReceive('clearLoginAttempts')->once();
 
 		// We then clear any reset password attempts as the
-		// login was succesfuly
+		// login was successfully
 		$user->shouldReceive('clearResetPassword')->once();
 
 		// And we manually log in our user
@@ -318,10 +318,64 @@ class SentryTest extends PHPUnit_Framework_TestCase {
 	public function testCheckingUserWhenUserIsSetAndActivated()
 	{
 		$user = m::mock('Cartalyst\Sentry\Users\UserInterface');
+		$throttle = m::mock('Cartalyst\Sentry\Throttling\ThrottleInterface');
+		$throttle->shouldReceive('isBanned')->once()->andReturn(false);
+		$throttle->shouldReceive('isSuspended')->once()->andReturn(false);
+
 		$user->shouldReceive('isActivated')->once()->andReturn(true);
+
+		$this->throttleProvider->shouldReceive('findByUser')->once()->andReturn($throttle);
+		$this->throttleProvider->shouldReceive('isEnabled')->once()->andReturn(true);
 
 		$this->sentry->setUser($user);
 		$this->assertTrue($this->sentry->check());
+	}
+
+	public function testCheckingUserWhenUserIsSetAndSuspended()
+	{
+		$user     = m::mock('Cartalyst\Sentry\Users\UserInterface');
+		$throttle = m::mock('Cartalyst\Sentry\Throttling\ThrottleInterface');
+		$session  = m::mock('Cartalyst\Sentry\Sessions\SessionInterface');
+		$cookie   = m::mock('Cartalyst\Sentry\Cookies\CookieInterface');
+
+		$throttle->shouldReceive('isBanned')->once()->andReturn(false);
+		$throttle->shouldReceive('isSuspended')->once()->andReturn(true);
+
+		$session->shouldReceive('forget')->once();
+		$cookie->shouldReceive('forget')->once();
+
+		$user->shouldReceive('isActivated')->once()->andReturn(true);
+
+		$this->throttleProvider->shouldReceive('findByUser')->once()->andReturn($throttle);
+		$this->throttleProvider->shouldReceive('isEnabled')->once()->andReturn(true);
+
+		$this->sentry->setSession($session);
+		$this->sentry->setCookie($cookie);
+		$this->sentry->setUser($user);
+		$this->assertFalse($this->sentry->check());
+	}
+
+	public function testCheckingUserWhenUserIsSetAndBanned()
+	{
+		$user     = m::mock('Cartalyst\Sentry\Users\UserInterface');
+		$throttle = m::mock('Cartalyst\Sentry\Throttling\ThrottleInterface');
+		$session  = m::mock('Cartalyst\Sentry\Sessions\SessionInterface');
+		$cookie   = m::mock('Cartalyst\Sentry\Cookies\CookieInterface');
+
+		$throttle->shouldReceive('isBanned')->once()->andReturn(true);
+
+		$session->shouldReceive('forget')->once();
+		$cookie->shouldReceive('forget')->once();
+
+		$user->shouldReceive('isActivated')->once()->andReturn(true);
+
+		$this->throttleProvider->shouldReceive('findByUser')->once()->andReturn($throttle);
+		$this->throttleProvider->shouldReceive('isEnabled')->once()->andReturn(true);
+
+		$this->sentry->setSession($session);
+		$this->sentry->setCookie($cookie);
+		$this->sentry->setUser($user);
+		$this->assertFalse($this->sentry->check());
 	}
 
 	public function testCheckingUserWhenUserIsSetAndNotActivated()
@@ -338,6 +392,13 @@ class SentryTest extends PHPUnit_Framework_TestCase {
 		$this->session->shouldReceive('get')->once()->andReturn(array('foo', 'persist_code'));
 		$this->cookie->shouldReceive('get')->never();
 
+		$throttle = m::mock('Cartalyst\Sentry\Throttling\ThrottleInterface');
+		$throttle->shouldReceive('isBanned')->once()->andReturn(false);
+		$throttle->shouldReceive('isSuspended')->once()->andReturn(false);
+
+		$this->throttleProvider->shouldReceive('findByUser')->once()->andReturn($throttle);
+		$this->throttleProvider->shouldReceive('isEnabled')->once()->andReturn(true);
+
 		$this->userProvider->shouldReceive('findById')->andReturn($user = m::mock('Cartalyst\Sentry\Users\UserInterface'));
 
 		$user->shouldReceive('checkPersistCode')->with('persist_code')->once()->andReturn(true);
@@ -351,7 +412,13 @@ class SentryTest extends PHPUnit_Framework_TestCase {
 		$this->session->shouldReceive('get')->once();
 		$this->cookie->shouldReceive('get')->once()->andReturn(array('foo', 'persist_code'));
 
+		$throttle = m::mock('Cartalyst\Sentry\Throttling\ThrottleInterface');
+		$throttle->shouldReceive('isBanned')->once()->andReturn(false);
+		$throttle->shouldReceive('isSuspended')->once()->andReturn(false);
+
 		$this->userProvider->shouldReceive('findById')->andReturn($user = m::mock('Cartalyst\Sentry\Users\UserInterface'));
+		$this->throttleProvider->shouldReceive('findByUser')->once()->andReturn($throttle);
+		$this->throttleProvider->shouldReceive('isEnabled')->once()->andReturn(true);
 
 		$user->shouldReceive('checkPersistCode')->with('persist_code')->once()->andReturn(true);
 		$user->shouldReceive('isActivated')->once()->andReturn(true);
@@ -424,5 +491,107 @@ class SentryTest extends PHPUnit_Framework_TestCase {
 		$sentry->shouldReceive('check')->once();
 		$sentry->getUser();
 	}
+
+    public function testFindGroupById()
+    {
+        $this->groupProvider->shouldReceive('findById')->once()->andReturn(true);
+        $this->assertTrue($this->sentry->findGroupByID(1));
+    }
+
+    public function testFindGroupByName()
+    {
+        $this->groupProvider->shouldReceive('findByName')->once()->andReturn(true);
+        $this->assertTrue($this->sentry->findGroupByName("name"));
+    }
+
+    public function testFindAllGroups()
+    {
+        $this->groupProvider->shouldReceive('findAll')->once()->andReturn(true);
+        $this->assertTrue($this->sentry->findAllGroups());
+    }
+
+    public function testCreateGroup()
+    {
+        $this->groupProvider->shouldReceive('create')->once()->andReturn(true);
+        $this->assertTrue($this->sentry->createGroup(array()));
+    }
+
+    public function testFindUserByID()
+    {
+        $this->userProvider->shouldReceive('findById')->once()->andReturn(true);
+        $this->assertTrue($this->sentry->findUserById(1));
+    }
+    public function testFindUserByLogin()
+    {
+        $this->userProvider->shouldReceive('findByLogin')->once()->andReturn(true);
+        $this->assertTrue($this->sentry->findUserByLogin("login"));
+    }
+
+    public function testFindUserByCredentials()
+    {
+        $this->userProvider->shouldReceive('findByCredentials')->once()->andReturn(true);
+        $this->assertTrue($this->sentry->findUserByCredentials(array()));
+    }
+
+    public function testFindUserByActivationCode()
+    {
+        $this->userProvider->shouldReceive('findByActivationCode')->once()->andReturn(true);
+        $this->assertTrue($this->sentry->findUserByActivationCode("x"));
+    }
+
+    public function testFindUserByResetPasswordCode()
+    {
+        $this->userProvider->shouldReceive('findByResetPasswordCode')->once()->andReturn(true);
+        $this->assertTrue($this->sentry->findUserByResetPasswordCode("x"));
+    }
+
+    public function testFindAllUsers()
+    {
+        $this->userProvider->shouldReceive('findAll')->once()->andReturn(true);
+        $this->assertTrue($this->sentry->findAllUsers());
+    }
+
+    public function testFindAllUsersInGroup()
+    {
+        $group = m::mock('Cartalyst\Sentry\Groups\GroupInterface');
+        $this->userProvider->shouldReceive('findAllInGroup')->once()->andReturn(true);
+        $this->assertTrue($this->sentry->findAllUsersInGroup($group));
+    }
+
+    public function testFindAllUsersWithAccess()
+    {
+        $this->userProvider->shouldReceive('findAllWithAccess')->once()->andReturn(true);
+        $this->assertTrue($this->sentry->findAllUsersWithAccess(""));
+    }
+
+    public function testFindAllUsersWithAnyAccess()
+    {
+        $this->userProvider->shouldReceive('findAllWithAnyAccess')->once()->andReturn(true);
+        $this->assertTrue($this->sentry->findAllUsersWithAnyAccess(array()));
+    }
+
+    public function testCreateUser()
+    {
+        $this->userProvider->shouldReceive('create')->once()->andReturn(true);
+        $this->assertTrue($this->sentry->createUser(array()));
+    }
+
+    public function testGetEmptyUser()
+    {
+        $this->userProvider->shouldReceive('getEmptyUser')->once()->andReturn(true);
+        $this->assertTrue($this->sentry->getEmptyUser());
+    }
+
+    public function testFindThrottlerByUserID()
+    {
+        $this->throttleProvider->shouldReceive('findByUserId')->once()->andReturn(true);
+        $this->assertTrue($this->sentry->findThrottlerByUserId(1));
+    }
+
+    public function testFindThrottlerByUserLogin()
+    {
+        $this->throttleProvider->shouldReceive('findByUserLogin')->once()->andReturn(true);
+        $this->assertTrue($this->sentry->findThrottlerByUserLogin("X"));
+    }
 
 }

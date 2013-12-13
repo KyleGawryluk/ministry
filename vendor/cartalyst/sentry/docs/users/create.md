@@ -1,4 +1,4 @@
-### Create a new User
+## Create a new User
 
 In this section you will learn how to create a user and assign him a group.
 
@@ -8,29 +8,27 @@ required, all the other fields are optional.
 
 When you are creating your user, and something goes wrong, you most likely want
 to know where is the problem, well, Sentry got you covered, and if a problem
-arises, individual [Exceptions](/sentry-2/users/create#exceptions) are thrown, one for each error you have.
+arises, individual [Exceptions]({url}/users/create#exceptions) are thrown, one for each error you have.
 
-----------
+### Exceptions {#exceptions}
 
-#### Exceptions
+---
 
-##### Cartalyst\Sentry\Users\LoginRequiredException
+**Cartalyst\Sentry\Users\LoginRequiredException**
 
 When you don't provide the required `login` field, this exception will be thrown.
 
-##### Cartalyst\Sentry\Users\PasswordRequiredException
+**Cartalyst\Sentry\Users\PasswordRequiredException**
 
 When you don't provide the `password` field, this exception will be thrown.
 
-##### Cartalyst\Sentry\Users\UserExistsException
+**Cartalyst\Sentry\Users\UserExistsException**
 
 This exception will be thrown when the user you are trying to create already
 exists on your database.
 
 What this means is, if your `login` field is `email` and that email address is
-already registerd on your database, you can't use this email for this user.
-
-----------
+already registered on your database, you can't use this email for this user.
 
 #### Examples
 
@@ -39,13 +37,14 @@ already registerd on your database, you can't use this email for this user.
 	try
 	{
 		// Create the user
-		$user = Sentry::getUserProvider()->create(array(
-			'email'    => 'john.doe@example.com',
-			'password' => 'test',
+		$user = Sentry::createUser(array(
+			'email'     => 'john.doe@example.com',
+			'password'  => 'test',
+			'activated' => true,
 		));
 
 		// Find the group using the group id
-		$adminGroup = Sentry::getGroupProvider()->findById(1);
+		$adminGroup = Sentry::findGroupById(1);
 
 		// Assign the group to the user
 		$user->addGroup($adminGroup);
@@ -74,16 +73,15 @@ that is not referenced on the list above, this is because, we are fetching the
 group that we want to assign, and if that group does not exist, this Exception
 will be thrown.
 
-----------
-
-###### Create an user and Grant Permissions
+##### Create an user and Grant Permissions
 
 	try
 	{
 		// Create the user
-		$user = Sentry::getUserProvider()->create(array(
+		$user = Sentry::createUser(array(
 			'email'       => 'john.doe@example.com',
 			'password'    => 'test',
+			'activated'   => true,
 			'permissions' => array(
 				'user.create' => -1,
 				'user.delete' => -1,

@@ -151,3 +151,7 @@ Route::get('/christian-home', array('as' => 'christian-home', 'uses' => 'HomeCon
 
 
 Route::get('/blog', array('as' => 'blog', 'uses' => 'BlogController@getIndex'));
+
+
+Route::resource('pastors', 'PastorsController');
+

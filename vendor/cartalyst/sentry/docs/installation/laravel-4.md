@@ -1,20 +1,59 @@
-### Installing in Laravel 4 (with Composer)
+## Install & Configure in Laravel 4
 
-**There are four simple steps to install Sentry into Laravel 4:**
+### 1. Composer {#composer}
 
-##### Step 1
+----
 
-Add `"cartalyst/sentry": "2.0.*"` to the `require` attribute of your `composer.json`
-(requires you to run `php composer.phar update` from the command line)
+Open your `composer.json` file and add the following lines:
 
-##### Step 2
+	{
+		"require": {
+			"cartalyst/sentry": "2.0.*",
+		},
+		"minimum-stability": "stable"
+	}
 
-Add `'Cartalyst\Sentry\SentryServiceProvider'` to the list of service providers in `app/config/app.php`
+Run composer update from the command line
 
-##### Step 3  *(optional)*
+	composer update
 
-Add `'Sentry' => 'Cartalyst\Sentry\Facades\Laravel\Sentry'` to the list of class aliases in `app/config/app.php`
 
-##### Step 4
+### 2. Service Provider {#service-provider}
 
-If you'd like to migrate tables, simply run `php artisan migrate --package=cartalyst/sentry` from the command line. Of course, feel free to write your own migrations which insert the correct tables if you'd like!
+----
+
+Add the following to the list of service providers in `app/config/app.php`.
+
+	'Cartalyst\Sentry\SentryServiceProvider',
+
+
+### 3. Alias {#aliases}
+
+----
+
+Add the following to the list of class aliases in `app/config/app.php`.
+
+	'Sentry' => 'Cartalyst\Sentry\Facades\Laravel\Sentry',
+
+
+### 4. Migrations {#migrations}
+
+----
+
+Sentry comes with it's own migration files and in order for you to run these migrations successfully you need to have
+a default database connection setup on your Laravel 4 application, once you have that setup, you can run the following
+command to run the migrations:
+
+	php artisan migrate --package=cartalyst/sentry
+
+Feel free to write your own migrations which insert the correct tables if you'd like!
+
+### 5. Configuration {#configuration}
+
+----
+
+After installing, you can publish the package's configuration file into your application, by running the following command:
+
+	php artisan config:publish cartalyst/sentry
+
+This will publish the config file to `app/config/packages/cartalyst/sentry/config.php` where you modify the package configuration.

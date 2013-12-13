@@ -1,32 +1,30 @@
-### Update a Group
+## Update a Group
 
 In this section you will learn how easy it is to update a Group.
 
-----------
+### Exceptions
 
-#### Exceptions
+---
 
-##### Cartalyst\Sentry\Groups\NameRequiredException
+**Cartalyst\Sentry\Groups\NameRequiredException**
 
 If you don't provide the group name, this exception will be thrown.
 
-##### Cartalyst\Sentry\Groups\GroupExistsException
+**Cartalyst\Sentry\Groups\GroupExistsException**
 
 This exception will be thrown when the group you are trying to create already
 exists on your database.
 
-##### Cartalyst\Sentry\Users\GroupNotFoundException
+**Cartalyst\Sentry\Groups\GroupNotFoundException**
 
 If the provided group was not found, this exception will be thrown.
-
-----------
 
 #### Example
 
 	try
 	{
 		// Find the group using the group id
-		$group = Sentry::getGroupProvider()->findById(1);
+		$group = Sentry::findGroupById(1);
 
 		// Update the group details
 		$group->name = 'Users';

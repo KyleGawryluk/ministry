@@ -20,6 +20,7 @@
 
 use Illuminate\Container\Container;
 use Illuminate\Cookie\CookieJar;
+use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Cookie;
 
 class IlluminateCookie implements CookieInterface {
@@ -34,26 +35,28 @@ class IlluminateCookie implements CookieInterface {
 	/**
 	 * The cookie object.
 	 *
-	 * @var Illuminate\Cookie\CookieJar
+	 * @var \Illuminate\Cookie\CookieJar
 	 */
 	protected $jar;
 
 	/**
 	 * The cookie to be stored.
 	 *
-	 * @var Symfony\Component\HttpFoundation\Cookie
+	 * @var \Symfony\Component\HttpFoundation\Cookie
 	 */
 	protected $cookie;
 
 	/**
 	 * Creates a new cookie instance.
 	 *
-	 * @param  Illuminate\Cookie\CookieJar  $jar
+	 * @param  \Illuminate\Http\Request  $request
+	 * @param  \Illuminate\Cookie\CookieJar  $jar
 	 * @param  string  $key
 	 * @return void
 	 */
-	public function __construct(CookieJar $jar, $key = null)
+	public function __construct(Request $request, CookieJar $jar, $key = null)
 	{
+		$this->request = $request;
 		$this->jar = $jar;
 
 		if (isset($key))
@@ -81,7 +84,8 @@ class IlluminateCookie implements CookieInterface {
 	 */
 	public function put($value, $minutes)
 	{
-		$this->cookie = $this->jar->make($this->getKey(), $value, $minutes);
+		$cookie = $this->jar->make($this->getKey(), $value, $minutes);
+		$this->jar->queue($cookie);
 	}
 
 	/**
@@ -92,7 +96,8 @@ class IlluminateCookie implements CookieInterface {
 	 */
 	public function forever($value)
 	{
-		$this->cookie = $this->jar->forever($this->getKey(), $value);
+		$cookie = $this->jar->forever($this->getKey(), $value);
+		$this->jar->queue($cookie);
 	}
 
 	/**
@@ -102,7 +107,15 @@ class IlluminateCookie implements CookieInterface {
 	 */
 	public function get()
 	{
-		return $this->jar->get($this->getKey());
+		$key = $this->getKey();
+		$queued = $this->jar->getQueuedCookies();
+
+		if (isset($queued[$key]))
+		{
+			return $queued[$key];
+		}
+
+		return $this->request->cookie($key);
 	}
 
 	/**
@@ -112,18 +125,8 @@ class IlluminateCookie implements CookieInterface {
 	 */
 	public function forget()
 	{
-		$this->cookie = $this->jar->forget($this->getKey());
-	}
-
-	/**
-	 * Returns the Symfony cookie object associated
-	 * with the Illuminate cookie.
-	 *
-	 * @return Symfony\Component\HttpFoundation\Cookie
-	 */
-	public function getCookie()
-	{
-		return $this->cookie;
+		$cookie = $this->jar->forget($this->getKey());
+		$this->jar->queue($cookie);
 	}
 
 }

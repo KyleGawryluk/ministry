@@ -130,13 +130,13 @@
 
 
 			<!-- Footer -->
-			<footer class="navbar navbar-inverse navbar-fixed-bottom pad-footer">
+<!-- 			<footer class="navbar navbar-inverse navbar-fixed-bottom pad-footer">
 				<div class="navbar-inner footer">
 					<div class="container">
 						<p class="footer">&copy; Grace Christian Ministries {{ date('Y') }}</p>
 					</div>
 				</div>
-			</footer>
+			</footer> -->
 		</div>
 
 		<!-- Javascripts

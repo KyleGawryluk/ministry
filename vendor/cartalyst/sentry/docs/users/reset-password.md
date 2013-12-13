@@ -1,28 +1,28 @@
-### Reset a User Password
+## Reset a User Password
 
 In this section you will learn how easy it is to reset a user password with Sentry 2.
 
-----------
+### Exceptions {#exceptions}
 
-#### Exceptions
+---
 
-##### Cartalyst\Sentry\Users\UserNotFoundException
+**Cartalyst\Sentry\Users\UserNotFoundException**
 
 If the provided user was not found, this exception will be thrown.
 
-----------
+### Step 1
 
-#### Step 1
+---
 
 The first step is to get a password reset code, to do this we use the
 `getResetPasswordCode()` method.
 
-##### Example
+#### Example
 
 	try
 	{
 		// Find the user using the user email address
-		$user = Sentry::getUserProvider()->findByLogin('john.doe@example.com');
+		$user = Sentry::findUserByLogin('john.doe@example.com');
 
 		// Get the password reset code
 		$resetCode = $user->getResetPasswordCode();
@@ -34,19 +34,21 @@ The first step is to get a password reset code, to do this we use the
 		echo 'User was not found.';
 	}
 
-#### Step 2
+### Step 2
+
+---
 
 After your user received the password reset code you need to provide a way
 for them to validate that code, and reset their password.
 
 All the logic part on how you pass the reset password code is all up to you.
 
-##### Example
+#### Example
 
 	try
 	{
 		// Find the user using the user id
-		$user = Sentry::getUserProvider()->findById(1);
+		$user = Sentry::findUserById(1);
 
 		// Check if the reset password code is valid
 		if ($user->checkResetPasswordCode('8f1Z7wA4uVt7VemBpGSfaoI9mcjdEwtK8elCnQOb'))

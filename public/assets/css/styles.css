@@ -82,6 +82,15 @@ body {
 	width:100%
 }
 
+.pastor-div{
+	overflow:hidden;
+	max-width:275px;
+	height:150px;
+}
+
+.pastor{
+	color:#fff;
+}
 
 
 @media (max-width: 320px) {

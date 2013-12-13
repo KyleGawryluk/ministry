@@ -1,17 +1,17 @@
-### Helpers
+## Helpers
 
-----------
+### checkPassword() {#checkpassword}
 
-#### checkPassword()
+---
 
 Checks if the provided password matches the user's current password.
 
-##### Example
+#### Example
 
 	try
 	{
 		// Find the user using the user id
-		$user = Sentry::getUserProvider()->findById(1);
+		$user = Sentry::findUserById(1);
 
 		if($user->checkPassword('mypassword'))
 		{
@@ -27,18 +27,18 @@ Checks if the provided password matches the user's current password.
 		echo 'User was not found.';
 	}
 
-----------
+### getGroups() {#getgroups}
 
-#### getGroups()
+---
 
 Returns the user groups.
 
-##### Example
+#### Example
 
 	try
 	{
 		// Find the user using the user id
-		$user = Sentry::getUserProvider()->findById(1);
+		$user = Sentry::findUserByID(1);
 
 		// Get the user groups
 		$groups = $user->getGroups();
@@ -48,18 +48,18 @@ Returns the user groups.
 		echo 'User was not found.';
 	}
 
-----------
+### getPermissions() {#getpermissions}
 
-#### getPermissions()
+---
 
 Returns the user permissions.
 
-##### Example
+#### Example
 
 	try
 	{
 		// Find the user using the user id
-		$user = Sentry::getUserProvider()->findById(1);
+		$user = Sentry::findUserByID(1);
 
 		// Get the user permissions
 		$permissions = $user->getPermissions();
@@ -69,13 +69,13 @@ Returns the user permissions.
 		echo 'User was not found.';
 	}
 
-----------
+### getMergedPermissions() {#getmergedpermissions}
 
-#### getMergedPermissions()
+---
 
 Returns an array of merged permissions from groups and the user permissions.
 
-##### Example
+#### Example
 
 	try
 	{
@@ -90,9 +90,9 @@ Returns an array of merged permissions from groups and the user permissions.
 		echo 'User was not found.';
 	}
 
-----------
+### hasAccess($permission) {#hasaccess}
 
-#### hasAccess($permission)
+---
 
 Checks to see if a user been granted a certain permission. This includes any
 permissions given to them by groups they may be apart of as well. Users may
@@ -102,12 +102,12 @@ permissions that may have been assigned to them from a group.
 Any user with `superuser` permissions automatically has access to everything,
 regardless of the user permissions and group permissions.
 
-##### Example
+#### Example
 
 	try
 	{
 		// Find the user using the user id
-		$user = Sentry::getUserProvider()->findById(1);
+		$user = Sentry::findUserByID(1);
 
 		// Check if the user has the 'admin' permission. Also,
 		// multiple permissions may be used by passing an array
@@ -125,9 +125,9 @@ regardless of the user permissions and group permissions.
 		echo 'User was not found.';
 	}
 
-----------
+### hasAnyAccess($permissions) {#hasanyaccess}
 
-#### hasAnyAccess($permissions)
+---
 
 This method calls the `hasAccess()` method, and it is used to check if an user
 has access to any of the provided permissions.
@@ -135,7 +135,7 @@ has access to any of the provided permissions.
 If one of the provided permissions is found it will return `true` even though the
 user may not have access to the other provided permissions.
 
-##### Example
+#### Example
 
 	try
 	{
@@ -157,18 +157,18 @@ user may not have access to the other provided permissions.
 		echo 'User was not found.';
 	}
 
-----------
+### isActivated() {#isactivated}
 
-#### isActivated()
+---
 
 Checks if a user is activated.
 
-##### Example
+#### Example
 
 	try
 	{
 		// Find the user
-		$user = Sentry::getUserProvider()->findByLogin('jonh.doe@example.com');
+		$user = Sentry::findUserByLogin('jonh.doe@example.com');
 
 		// Check if the user is activated or not
 		if ($user->isActivated())
@@ -185,9 +185,9 @@ Checks if a user is activated.
 		echo 'User was not found.';
 	}
 
-----------
+### isSuperUser() {#issuperuser}
 
-#### isSuperUser()
+---
 
 Returns if the user is a super user, it means, that has access to everything regardless of permissions.
 
@@ -196,7 +196,7 @@ Returns if the user is a super user, it means, that has access to everything reg
 	try
 	{
 		// Find the user
-		$user = Sentry::getUserProvider()->findByLogin('jonh.doe@example.com');
+		$user = Sentry::findUserByLogin('jonh.doe@example.com');
 
 		// Check if this user is a super user
 		if ($user->isSuperUser())
@@ -213,21 +213,21 @@ Returns if the user is a super user, it means, that has access to everything reg
 		echo 'User was not found.';
 	}
 
-----------
+### inGroup($group) {#ingroup}
 
-#### inGroup($group)
+---
 
 Checks if a user is in a certain group.
 
-##### Example
+#### Example
 
 	try
 	{
 		// Find the user using the user id
-		$user = Sentry::getUserProvider()->findById(1);
+		$user = Sentry::findUserByID(1);
 
 		// Find the Administrator group
-		$admin = Sentry::getGroupProvider()->findByName('Administrator');
+		$admin = Sentry::findGroupByName('Administrator');
 
 		// Check if the user is in the administrator group
 		if ($user->inGroup($admin))

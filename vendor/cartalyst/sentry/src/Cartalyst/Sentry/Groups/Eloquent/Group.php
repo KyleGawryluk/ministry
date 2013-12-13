@@ -51,6 +51,20 @@ class Group extends Model implements GroupInterface {
 	protected $allowedPermissionsValues = array(0, 1);
 
 	/**
+	 * The Eloquent user model.
+	 *
+	 * @var string
+	 */
+	protected static $userModel = 'Cartalyst\Sentry\Users\Eloquent\User';
+
+	/**
+	 * The user groups pivot table name.
+	 *
+	 * @var string
+	 */
+	protected static $userGroupsPivot = 'users_groups';
+
+	/**
 	 * Returns the group's ID.
 	 *
 	 * @return mixed
@@ -119,8 +133,30 @@ class Group extends Model implements GroupInterface {
 					$checkPermission = substr($permission, 0, -1);
 
 					// We will make sure that the merged permission does not
-					// exactly match our permission, but starts wtih it.
+					// exactly match our permission, but starts with it.
 					if ($checkPermission != $groupPermission and starts_with($groupPermission, $checkPermission) and $value == 1)
+					{
+						$matched = true;
+						break;
+					}
+				}
+			}
+
+			// Now, let's check if the permission starts in a wildcard "*" symbol.
+			// If it does, we'll check through all the merged permissions to see
+			// if a permission exists which matches the wildcard.
+			elseif ((strlen($permission) > 1) and starts_with($permission, '*'))
+			{
+				$matched = false;
+
+				foreach ($groupPermissions as $groupPermission => $value)
+				{
+					// Strip the '*' off the start of the permission.
+					$checkPermission = substr($permission, 1);
+
+					// We will make sure that the merged permission does not
+					// exactly match our permission, but ends with it.
+					if ($checkPermission != $groupPermission and ends_with($groupPermission, $checkPermission) and $value == 1)
 					{
 						$matched = true;
 						break;
@@ -197,11 +233,33 @@ class Group extends Model implements GroupInterface {
 	/**
 	 * Returns the relationship between groups and users.
 	 *
-	 * @return Illuminate\Database\Eloquent\Relations\BelongsToMany
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
 	 */
 	public function users()
 	{
-		return $this->belongsToMany('Cartalyst\Sentry\Users\Eloquent\User', 'users_groups');
+		return $this->belongsToMany(static::$userModel, static::$userGroupsPivot);
+	}
+
+	/**
+	 * Set the Eloquent model to use for user relationships.
+	 *
+	 * @param  string  $model
+	 * @return void
+	 */
+	public static function setUserModel($model)
+	{
+		static::$userModel = $model;
+	}
+
+	/**
+	 * Set the user groups pivot table name.
+	 *
+	 * @param  string  $tableName
+	 * @return void
+	 */
+	public static function setUserGroupsPivot($tableName)
+	{
+		static::$userGroupsPivot = $tableName;
 	}
 
 	/**
@@ -230,8 +288,9 @@ class Group extends Model implements GroupInterface {
 	/**
 	 * Mutator for giving permissions.
 	 *
-	 * @param  mixed  $permissions
-	 * @return array  $_permissions
+	 * @param  mixed $permissions
+	 * @return array
+	 * @throws \InvalidArgumentException
 	 */
 	public function getPermissionsAttribute($permissions)
 	{
@@ -258,13 +317,14 @@ class Group extends Model implements GroupInterface {
 	 *
 	 * @param  array  $permissions
 	 * @return void
+	 * @throws \InvalidArgumentException
 	 */
 	public function setPermissionsAttribute(array $permissions)
 	{
 		// Merge permissions
 		$permissions = array_merge($this->getPermissions(), $permissions);
 
-		// Loop through and adjsut permissions as needed
+		// Loop through and adjust permissions as needed
 		foreach ($permissions as $permission => &$value)
 		{
 			// Lets make sure their is a valid permission value
@@ -305,8 +365,8 @@ class Group extends Model implements GroupInterface {
 	 * Exceptions if validation fails.
 	 *
 	 * @return bool
-	 * @throws Cartalyst\Sentry\Groups\NameRequiredException
-	 * @throws Cartalyst\Sentry\Groups\GroupExistsException
+	 * @throws \Cartalyst\Sentry\Groups\NameRequiredException
+	 * @throws \Cartalyst\Sentry\Groups\GroupExistsException
 	 */
 	public function validate()
 	{

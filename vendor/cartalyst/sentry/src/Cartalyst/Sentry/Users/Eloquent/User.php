@@ -92,7 +92,7 @@ class User extends Model implements UserInterface {
 	/**
 	 * The hasher the model uses.
 	 *
-	 * @var Cartalyst\Sentry\Hashing\HasherInterface
+	 * @var \Cartalyst\Sentry\Hashing\HasherInterface
 	 */
 	protected static $hasher;
 
@@ -109,6 +109,20 @@ class User extends Model implements UserInterface {
 	 * @var array
 	 */
 	protected $mergedPermissions;
+
+	/**
+	 * The Eloquent group model.
+	 *
+	 * @var string
+	 */
+	protected static $groupModel = 'Cartalyst\Sentry\Groups\Eloquent\Group';
+
+	/**
+	 * The user groups pivot table name.
+	 *
+	 * @var string
+	 */
+	protected static $userGroupsPivot = 'users_groups';
 
 	/**
 	 * Returns the user's ID.
@@ -263,9 +277,9 @@ class User extends Model implements UserInterface {
 	 * Exceptions if validation fails.
 	 *
 	 * @return bool
-	 * @throws Cartalyst\Sentry\Users\LoginRequiredException
-	 * @throws Cartalyst\Sentry\Users\PasswordRequiredException
-	 * @throws Cartalyst\Sentry\Users\UserExistsException
+	 * @throws \Cartalyst\Sentry\Users\LoginRequiredException
+	 * @throws \Cartalyst\Sentry\Users\PasswordRequiredException
+	 * @throws \Cartalyst\Sentry\Users\UserExistsException
 	 */
 	public function validate()
 	{
@@ -371,7 +385,7 @@ class User extends Model implements UserInterface {
 	 *
 	 * @param  string  $activationCode
 	 * @return bool
-	 * @throws Cartalyst\Sentry\Users\UserAlreadyActivatedException
+	 * @throws \Cartalyst\Sentry\Users\UserAlreadyActivatedException
 	 */
 	public function attemptActivation($activationCode)
 	{
@@ -429,7 +443,7 @@ class User extends Model implements UserInterface {
 	}
 
 	/**
-	 * Attemps to reset a user's password by matching
+	 * Attempts to reset a user's password by matching
 	 * the reset code generated with the user's.
 	 *
 	 * @param  string  $resetCode
@@ -482,7 +496,7 @@ class User extends Model implements UserInterface {
 	/**
 	 * Adds the user to the given group.
 	 *
-	 * @param  Cartalyst\Sentry\Groups\GroupInterface  $group
+	 * @param \Cartalyst\Sentry\Groups\GroupInterface  $group
 	 * @return bool
 	 */
 	public function addGroup(GroupInterface $group)
@@ -490,6 +504,7 @@ class User extends Model implements UserInterface {
 		if ( ! $this->inGroup($group))
 		{
 			$this->groups()->attach($group);
+			$this->userGroups = null;
 		}
 
 		return true;
@@ -498,7 +513,7 @@ class User extends Model implements UserInterface {
 	/**
 	 * Removes the user from the given group.
 	 *
-	 * @param  Cartalyst\Sentry\Groups\GroupInterface  $group
+	 * @param \Cartalyst\Sentry\Groups\GroupInterface  $group
 	 * @return bool
 	 */
 	public function removeGroup(GroupInterface $group)
@@ -506,6 +521,7 @@ class User extends Model implements UserInterface {
 		if ($this->inGroup($group))
 		{
 			$this->groups()->detach($group);
+			$this->userGroups = null;
 		}
 
 		return true;
@@ -514,7 +530,7 @@ class User extends Model implements UserInterface {
 	/**
 	 * See if the user is in the given group.
 	 *
-	 * @param  Cartalyst\Sentry\Groups\GroupInterface  $group
+	 * @param \Cartalyst\Sentry\Groups\GroupInterface  $group
 	 * @return bool
 	 */
 	public function inGroup(GroupInterface $group)
@@ -621,8 +637,27 @@ class User extends Model implements UserInterface {
 					$checkPermission = substr($permission, 0, -1);
 
 					// We will make sure that the merged permission does not
-					// exactly match our permission, but starts wtih it.
+					// exactly match our permission, but starts with it.
 					if ($checkPermission != $mergedPermission and starts_with($mergedPermission, $checkPermission) and $value == 1)
+					{
+						$matched = true;
+						break;
+					}
+				}
+			}
+
+			elseif ((strlen($permission) > 1) and starts_with($permission, '*'))
+			{
+				$matched = false;
+
+				foreach ($mergedPermissions as $mergedPermission => $value)
+				{
+					// Strip the '*' off the beginning of the permission.
+					$checkPermission = substr($permission, 1);
+
+					// We will make sure that the merged permission does not
+					// exactly match our permission, but ends with it.
+					if ($checkPermission != $mergedPermission and ends_with($mergedPermission, $checkPermission) and $value == 1)
 					{
 						$matched = true;
 						break;
@@ -645,7 +680,7 @@ class User extends Model implements UserInterface {
 						$checkMergedPermission = substr($mergedPermission, 0, -1);
 
 						// We will make sure that the merged permission does not
-						// exactly match our permission, but starts wtih it.
+						// exactly match our permission, but starts with it.
 						if ($checkMergedPermission != $permission and starts_with($permission, $checkMergedPermission) and $value == 1)
 						{
 							$matched = true;
@@ -714,7 +749,29 @@ class User extends Model implements UserInterface {
 	 */
 	public function groups()
 	{
-		return $this->belongsToMany('Cartalyst\Sentry\Groups\Eloquent\Group', 'users_groups');
+		return $this->belongsToMany(static::$groupModel, static::$userGroupsPivot);
+	}
+
+	/**
+	 * Set the Eloquent model to use for group relationships.
+	 *
+	 * @param  string  $model
+	 * @return void
+	 */
+	public static function setGroupModel($model)
+	{
+		static::$groupModel = $model;
+	}
+
+	/**
+	 * Set the user groups pivot table name.
+	 *
+	 * @param  string  $tableName
+	 * @return void
+	 */
+	public static function setUserGroupsPivot($tableName)
+	{
+		static::$userGroupsPivot = $tableName;
 	}
 
 	/**
@@ -753,7 +810,8 @@ class User extends Model implements UserInterface {
 	}
 
 	/**
-	 * Generate a random string. If your server has
+	 * Generate a random string.
+	 *
 	 * @return string
 	 */
 	public function getRandomString($length = 42)
@@ -848,7 +906,7 @@ class User extends Model implements UserInterface {
 	/**
 	 * Sets the hasher for the user.
 	 *
-	 * @param  Cartalyst\Sentry\Hashing\HasherInterface  $hasher
+	 * @param \Cartalyst\Sentry\Hashing\HasherInterface $hasher
 	 * @return void
 	 */
 	public static function setHasher(HasherInterface $hasher)
@@ -859,7 +917,7 @@ class User extends Model implements UserInterface {
 	/**
 	 * Returns the hasher for the user.
 	 *
-	 * @return Cartalyst\Sentry\Hashing\HasherInterface
+	 * @return \Cartalyst\Sentry\Hashing\HasherInterface
 	 */
 	public static function getHasher()
 	{
@@ -882,7 +940,7 @@ class User extends Model implements UserInterface {
 	 * @param  string  $loginAttribute
 	 * @return void
 	 */
-	public static function setLoginAttribute($loginAttribute)
+	public static function setLoginAttributeName($loginAttribute)
 	{
 		static::$loginAttribute = $loginAttribute;
 	}
@@ -892,7 +950,7 @@ class User extends Model implements UserInterface {
 	 *
 	 * @return string
 	 */
-	public static function getLoginAttribute()
+	public static function getLoginAttributeName()
 	{
 		return static::$loginAttribute;
 	}
